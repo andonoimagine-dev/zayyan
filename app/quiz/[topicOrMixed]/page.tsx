@@ -3,6 +3,8 @@ import { getQuestionSet } from "@/lib/questions";
 import { getTopics } from "@/lib/topics";
 import QuizRunner from "./QuizRunner";
 
+export const dynamic = "force-dynamic";
+
 export default async function QuizPage({ params }: { params: Promise<{ topicOrMixed: string }> }) {
   const { topicOrMixed } = await params;
   const isMixed = topicOrMixed === "campuran";

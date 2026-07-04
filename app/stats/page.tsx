@@ -3,6 +3,8 @@ import { getAttempts, getTopicAccuracy } from "@/lib/stats";
 import { getTopics } from "@/lib/topics";
 import { ScoreTrendChart, TimeTrendChart, TopicAccuracyChart, ChartCard } from "./StatsCharts";
 
+export const dynamic = "force-dynamic";
+
 function formatDate(ms: number): string {
   return new Date(ms).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
 }
