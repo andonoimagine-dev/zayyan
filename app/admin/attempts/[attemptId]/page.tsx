@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { getAttemptReview } from "@/lib/admin-review";
+import DeleteAttemptButton from "../../DeleteAttemptButton";
 
 export default async function AdminAttemptReviewPage({ params }: { params: Promise<{ attemptId: string }> }) {
   if (!(await isAdminRequest())) redirect("/admin/login");
@@ -15,13 +16,14 @@ export default async function AdminAttemptReviewPage({ params }: { params: Promi
   return (
     <div className="flex flex-1 flex-col items-center bg-zinc-50 px-4 py-10 dark:bg-black sm:px-8">
       <div className="w-full max-w-2xl">
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-between gap-3">
           <Link href="/admin" className="text-sm text-sky-600 hover:underline dark:text-sky-400">
             ← Riwayat
           </Link>
           <span className="font-semibold text-zinc-900 dark:text-zinc-100">
             Skor: {attempt.correctCount}/{attempt.totalQuestions} ({attempt.scorePercent}%)
           </span>
+          <DeleteAttemptButton attemptId={attemptId} redirectTo="/admin" />
         </div>
 
         <div className="flex flex-col gap-4">

@@ -18,10 +18,12 @@ function formatElapsed(ms: number): string {
 }
 
 export default function QuizRunner({
+  subjectId,
   topicName,
   topicFilter,
   questions,
 }: {
+  subjectId: string;
   topicName: string;
   topicFilter: string | null;
   questions: PublicQuestion[];
@@ -80,6 +82,7 @@ export default function QuizRunner({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          subjectId,
           topicFilter,
           startedAt: startedAtRef.current,
           finishedAt,

@@ -1,7 +1,16 @@
 import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
 
+export const subjects = sqliteTable("subjects", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+});
+
 export const topics = sqliteTable("topics", {
   id: text("id").primaryKey(),
+  subjectId: text("subject_id")
+    .notNull()
+    .references(() => subjects.id),
   name: text("name").notNull(),
   description: text("description"),
 });
@@ -23,6 +32,9 @@ export const questions = sqliteTable("questions", {
 
 export const quizAttempts = sqliteTable("quiz_attempts", {
   id: text("id").primaryKey(),
+  subjectId: text("subject_id")
+    .notNull()
+    .references(() => subjects.id),
   startedAt: integer("started_at").notNull(),
   finishedAt: integer("finished_at"),
   durationMs: integer("duration_ms"),

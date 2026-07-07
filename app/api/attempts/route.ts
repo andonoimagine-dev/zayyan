@@ -12,6 +12,7 @@ type IncomingAnswer = {
 };
 
 type SubmitAttemptBody = {
+  subjectId: string;
   topicFilter: string | null;
   startedAt: number;
   finishedAt: number;
@@ -20,7 +21,7 @@ type SubmitAttemptBody = {
 
 export async function POST(request: NextRequest) {
   const body = (await request.json()) as SubmitAttemptBody;
-  const { topicFilter, startedAt, finishedAt, answers } = body;
+  const { subjectId, topicFilter, startedAt, finishedAt, answers } = body;
 
   if (!Array.isArray(answers) || answers.length === 0) {
     return NextResponse.json({ error: "No answers submitted" }, { status: 400 });
@@ -52,6 +53,7 @@ export async function POST(request: NextRequest) {
 
   await db.insert(quizAttempts).values({
     id: attemptId,
+    subjectId,
     startedAt,
     finishedAt,
     durationMs,

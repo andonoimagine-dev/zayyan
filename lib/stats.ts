@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 
 export type AttemptSummary = {
   id: string;
+  subjectId: string;
   startedAt: number;
   finishedAt: number | null;
   durationMs: number | null;
@@ -21,13 +22,15 @@ export type TopicAccuracy = {
   accuracyPercent: number;
 };
 
-export async function getAttempts(): Promise<AttemptSummary[]> {
-  const rows = await db.select().from(quizAttempts).orderBy(quizAttempts.startedAt);
+export async function getAttempts(subjectId?: string): Promise<AttemptSummary[]> {
+  const rows = subjectId
+    ? await db.select().from(quizAttempts).where(eq(quizAttempts.subjectId, subjectId)).orderBy(quizAttempts.startedAt)
+    : await db.select().from(quizAttempts).orderBy(quizAttempts.startedAt);
   return rows.filter((r) => r.finishedAt !== null);
 }
 
-export async function getTopicAccuracy(): Promise<TopicAccuracy[]> {
-  const rows = await db
+export async function getTopicAccuracy(subjectId?: string): Promise<TopicAccuracy[]> {
+  const query = db
     .select({
       topicId: topics.id,
       topicName: topics.name,
@@ -36,6 +39,8 @@ export async function getTopicAccuracy(): Promise<TopicAccuracy[]> {
     .from(attemptAnswers)
     .innerJoin(questions, eq(attemptAnswers.questionId, questions.id))
     .innerJoin(topics, eq(questions.topicId, topics.id));
+
+  const rows = subjectId ? await query.where(eq(topics.subjectId, subjectId)) : await query;
 
   const byTopic = new Map<string, { topicName: string; total: number; correct: number }>();
   for (const row of rows) {

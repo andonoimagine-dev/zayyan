@@ -1,5 +1,5 @@
 import { db } from "@/db/client";
-import { questions } from "@/db/schema";
+import { questions, topics } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export type PublicQuestion = {
@@ -20,10 +20,25 @@ function shuffle<T>(items: T[]): T[] {
   return copy;
 }
 
-export async function getQuestionSet(topicId: string | null): Promise<PublicQuestion[]> {
+export async function getQuestionSet(subjectId: string, topicId: string | null): Promise<PublicQuestion[]> {
   const rows = topicId
     ? await db.select().from(questions).where(eq(questions.topicId, topicId))
-    : await db.select().from(questions);
+    : await db
+        .select({
+          id: questions.id,
+          topicId: questions.topicId,
+          type: questions.type,
+          difficulty: questions.difficulty,
+          prompt: questions.prompt,
+          options: questions.options,
+          correctAnswer: questions.correctAnswer,
+          explanation: questions.explanation,
+          orderIndex: questions.orderIndex,
+          isActive: questions.isActive,
+        })
+        .from(questions)
+        .innerJoin(topics, eq(questions.topicId, topics.id))
+        .where(eq(topics.subjectId, subjectId));
 
   const active = rows.filter((q) => q.isActive);
 

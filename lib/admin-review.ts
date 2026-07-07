@@ -26,3 +26,8 @@ export async function getAttemptReview(attemptId: string) {
 
   return { attempt, answers };
 }
+
+export async function deleteAttempt(attemptId: string): Promise<void> {
+  await db.delete(attemptAnswers).where(eq(attemptAnswers.attemptId, attemptId));
+  await db.delete(quizAttempts).where(eq(quizAttempts.id, attemptId));
+}
