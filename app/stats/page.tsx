@@ -1,15 +1,12 @@
 import Link from "next/link";
 import { getAttempts, getTopicAccuracy } from "@/lib/stats";
 import { getSubjects } from "@/lib/subjects";
+import { getStudents } from "@/lib/students";
 import { getTopics } from "@/lib/topics";
+import { subjectEmoji } from "@/lib/subject-style";
 import { ScoreTrendChart, TimeTrendChart, TopicAccuracyChart, ChartCard } from "./StatsCharts";
 
 export const dynamic = "force-dynamic";
-
-const SUBJECT_EMOJI: Record<string, string> = {
-  matematika: "📐",
-  "bahasa-inggris": "🔤",
-};
 
 function formatDate(ms: number): string {
   return new Date(ms).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
@@ -24,9 +21,20 @@ function formatDuration(ms: number | null): string {
 }
 
 export default async function StatsPage() {
-  const [subjects, allAttempts, topics] = await Promise.all([getSubjects(), getAttempts(), getTopics()]);
+  const [subjects, students, allAttempts, topics] = await Promise.all([
+    getSubjects(),
+    getStudents(),
+    getAttempts(),
+    getTopics(),
+  ]);
   const topicNameById = new Map(topics.map((t) => [t.id, t.name]));
-  const subjectNameById = new Map(subjects.map((s) => [s.id, s.name]));
+  const studentNameById = new Map(students.map((s) => [s.id, s.name]));
+  const subjectNameById = new Map(
+    subjects.map((s) => [
+      s.id,
+      s.studentId && studentNameById.has(s.studentId) ? `${studentNameById.get(s.studentId)} · ${s.name}` : s.name,
+    ])
+  );
   const sortedDesc = [...allAttempts].sort((a, b) => b.startedAt - a.startedAt);
 
   const subjectSections = await Promise.all(
@@ -53,7 +61,7 @@ export default async function StatsPage() {
         {subjectSections.map(({ subject, attempts, topicAccuracy }) => (
           <div key={subject.id} className="mb-8">
             <h2 className="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-              {SUBJECT_EMOJI[subject.id] ?? "📘"} {subject.name}
+              {subjectEmoji(subject.name)} {subjectNameById.get(subject.id) ?? subject.name}
             </h2>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

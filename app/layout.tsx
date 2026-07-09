@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Latihan Matematika Zayyan",
-  description: "Latihan soal matematika gaya olimpiade Puspresnas untuk kelas 3 SD.",
+  title: "Media Pembelajaran Zayyan & Zayna",
+  description: "Latihan soal Matematika dan Bahasa Inggris untuk Zayyan (kelas 3 SD) dan Zayna (kelas 1 SD).",
 };
 
 export default function RootLayout({

@@ -11,7 +11,7 @@ export default async function AdminAttemptReviewPage({ params }: { params: Promi
   const review = await getAttemptReview(attemptId);
   if (!review) notFound();
 
-  const { attempt, answers } = review;
+  const { attempt, answers, subjectName, studentName } = review;
 
   return (
     <div className="flex flex-1 flex-col items-center bg-zinc-50 px-4 py-10 dark:bg-black sm:px-8">
@@ -25,6 +25,12 @@ export default async function AdminAttemptReviewPage({ params }: { params: Promi
           </span>
           <DeleteAttemptButton attemptId={attemptId} redirectTo="/admin" />
         </div>
+
+        {(studentName || subjectName) && (
+          <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">
+            {studentName ?? "-"} · {subjectName ?? "-"}
+          </p>
+        )}
 
         <div className="flex flex-col gap-4">
           {answers.map((a, i) => (
@@ -40,7 +46,7 @@ export default async function AdminAttemptReviewPage({ params }: { params: Promi
                       : "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-200"
                   }`}
                 >
-                  Jawaban Zayyan: {a.submittedAnswer ?? "(kosong)"}
+                  Jawaban {studentName ?? "Siswa"}: {a.submittedAnswer ?? "(kosong)"}
                 </span>
                 <span className="rounded-full bg-sky-100 px-3 py-1 text-sky-800 dark:bg-sky-900/40 dark:text-sky-200">
                   Kunci: {a.correctAnswer}

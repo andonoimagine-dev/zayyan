@@ -1,15 +1,25 @@
 import { db } from "./client";
-import { subjects, topics, questions } from "./schema";
-import { seedSubjects, seedTopics, seedQuestions } from "./seed-data";
+import { students, subjects, topics, questions } from "./schema";
+import { seedStudents, seedSubjects, seedTopics, seedQuestions } from "./seed-data";
 
 async function main() {
+  for (const student of seedStudents) {
+    await db
+      .insert(students)
+      .values(student)
+      .onConflictDoUpdate({
+        target: students.id,
+        set: { name: student.name, grade: student.grade, description: student.description },
+      });
+  }
+
   for (const subject of seedSubjects) {
     await db
       .insert(subjects)
       .values(subject)
       .onConflictDoUpdate({
         target: subjects.id,
-        set: { name: subject.name, description: subject.description },
+        set: { studentId: subject.studentId, name: subject.name, description: subject.description },
       });
   }
 
@@ -54,7 +64,7 @@ async function main() {
   }
 
   console.log(
-    `Seeded ${seedSubjects.length} subjects, ${seedTopics.length} topics, and ${seedQuestions.length} questions.`
+    `Seeded ${seedStudents.length} students, ${seedSubjects.length} subjects, ${seedTopics.length} topics, and ${seedQuestions.length} questions.`
   );
 }
 

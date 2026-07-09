@@ -15,6 +15,13 @@
       "when": 1783433814733,
       "tag": "0001_worthless_korg",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1783586610303,
+      "tag": "0002_pretty_chameleon",
+      "breakpoints": true
     }
   ]
 }

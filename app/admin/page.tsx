@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { getAttempts } from "@/lib/stats";
 import { getSubjects } from "@/lib/subjects";
+import { getStudents } from "@/lib/students";
 import { getTopics } from "@/lib/topics";
 import LogoutButton from "./LogoutButton";
 import DeleteAttemptButton from "./DeleteAttemptButton";
@@ -14,9 +15,20 @@ function formatDate(ms: number): string {
 export default async function AdminHomePage() {
   if (!(await isAdminRequest())) redirect("/admin/login");
 
-  const [attempts, topics, subjects] = await Promise.all([getAttempts(), getTopics(), getSubjects()]);
+  const [attempts, topics, subjects, students] = await Promise.all([
+    getAttempts(),
+    getTopics(),
+    getSubjects(),
+    getStudents(),
+  ]);
   const topicNameById = new Map(topics.map((t) => [t.id, t.name]));
-  const subjectNameById = new Map(subjects.map((s) => [s.id, s.name]));
+  const studentNameById = new Map(students.map((s) => [s.id, s.name]));
+  const subjectNameById = new Map(
+    subjects.map((s) => [
+      s.id,
+      s.studentId && studentNameById.has(s.studentId) ? `${studentNameById.get(s.studentId)} · ${s.name}` : s.name,
+    ])
+  );
   const sortedDesc = [...attempts].sort((a, b) => b.startedAt - a.startedAt);
 
   return (

@@ -1,7 +1,15 @@
 import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
 
+export const students = sqliteTable("students", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  grade: text("grade").notNull(),
+  description: text("description"),
+});
+
 export const subjects = sqliteTable("subjects", {
   id: text("id").primaryKey(),
+  studentId: text("student_id").references(() => students.id),
   name: text("name").notNull(),
   description: text("description"),
 });
